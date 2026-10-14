@@ -4,10 +4,12 @@ export default function Document() {
   return (
     <Html lang="id">
       <Head>
-        {/* Favicon / Logo Tab Browser */}
-        <link rel="icon" href="/images/NOCHY.png" />
+        {/* Favicon Lengkap */}
+        <link rel="icon" type="image/png" href="/images/NOCHY.png" />
+        <link rel="shortcut icon" type="image/png" href="/images/NOCHY.png" />
+        <link rel="apple-touch-icon" href="/images/NOCHY.png" />
 
-        {/* Google Fonts: Press Start 2P (Pixel Utama) & VT323 (Pixel Body) */}
+        {/* Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link 
