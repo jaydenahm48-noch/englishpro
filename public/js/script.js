@@ -6,7 +6,7 @@
 /*-- Navigation --*/
 const nav = document.querySelector('.nav'),
     navList = nav.querySelectorAll('li'),
-    totalNavList = navList.length;
+    totalNavList = navList.length,
     allSection = document.querySelectorAll('.section'),
     totalSection = allSection.length;
 
