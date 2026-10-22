@@ -102,12 +102,6 @@ export default function Home() {
 
                 {/* ── HOME ──────────────────────────────────────────────────────── */}
                     <section className="home active section" id="home">
-                        {/* Pixel particle canvas — atmospheric depth */}
-                        <canvas id="pixelCanvas" style={{
-                            position: 'absolute', inset: 0,
-                            width: '100%', height: '100%',
-                            pointerEvents: 'none', zIndex: 0, opacity: 0.35
-                        }} />
                         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
                             <div className="row">
                                 <div className="home-info padd-15">
@@ -123,29 +117,6 @@ export default function Home() {
                                         quality work while continuously improving.
                                     </p>
                                     <a href="/images/ZAIDANAHMAD_CV.pdf" className="btn" download>Download CV</a>
-                                </div>
-                                <div className="home-img padd-15">
-                                    <div 
-                                        style={{
-                                            width: '340px',
-                                            height: '300px',
-                                            overflow: 'hidden',
-                                            margin: '0 auto',
-                                            display: 'flex',
-                                            justifyContent: 'center'
-                                        }}
-                                    >
-                                        <img 
-                                            src={pixelFrames[currentFrame]} 
-                                            alt="Jayden Noch Pixel Animation" 
-                                            style={{
-                                                width: '100%',
-                                                height: '125%',    /* Menjaga proporsi potongan sampai bahu */
-                                                objectFit: 'cover',
-                                                objectPosition: 'top center'
-                                            }}
-                                        />
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -308,61 +279,6 @@ export default function Home() {
                             </div>
                         </div>
                     </section>
-                    {/* ── SERVICES ──────────────────────────────────────────────────── */}
-                    <section className="service section" id="service">
-                        <div className="container">
-                            <div className="row">
-                                <div className="section-title padd-15"><h2>Services</h2></div>
-                            </div>
-                            {/* Services di-render oleh JavaScript dari /api/services-public (atau hardcode sementara) */}
-                            <div className="row" id="servicesRow">
-                                {/* Placeholder — akan diisi oleh script.js */}
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-mobile-alt"></i></div>
-                                        <h4>Programmer</h4>
-                                        <p>Building web applications with modern technologies and best practices.</p>
-                                    </div>
-                                </div>
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-laptop-code"></i></div>
-                                        <h4>Web Development</h4>
-                                        <p>Creating responsive and performant websites from design to deployment.</p>
-                                    </div>
-                                </div>
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-palette"></i></div>
-                                        <h4>UI Design</h4>
-                                        <p>Designing clean and intuitive user interfaces for web applications.</p>
-                                    </div>
-                                </div>
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-code"></i></div>
-                                        <h4>Backend Dev</h4>
-                                        <p>Building robust server-side applications and REST APIs.</p>
-                                    </div>
-                                </div>
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-search"></i></div>
-                                        <h4>SEO</h4>
-                                        <p>Optimizing websites for search engines to improve visibility.</p>
-                                    </div>
-                                </div>
-                                <div className="service-item padd-15">
-                                    <div className="service-item-inner">
-                                        <div className="icon"><i className="fa fa-bullhorn"></i></div>
-                                        <h4>Consulting</h4>
-                                        <p>Technical consulting for software architecture and development.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
                     {/* ── CERTIFICATES ──────────────────────────────────────────────── */}
                     <section className="certificate section" id="certificate">
                         <div className="container">
@@ -552,56 +468,7 @@ export default function Home() {
             <Script src="/js/about-animations.js" strategy="afterInteractive" />
             <Script id="portfolio-contact-handler" strategy="afterInteractive">{`
 
-        // ── Pixel Particle Canvas (Home atmospheric depth) ──────────────────
-        (function initPixelCanvas() {
-          var canvas = document.getElementById('pixelCanvas');
-          if (!canvas) return;
-          var ctx = canvas.getContext('2d');
-          var particles = [];
-          var COLORS = ['#ec1839','#ffffff','#8fa3b8','#1e2a3a'];
-
-          function resize() {
-            canvas.width  = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-          }
-          resize();
-          window.addEventListener('resize', resize);
-
-          // Spawn ~60 pixel particles
-          for (var i = 0; i < 60; i++) {
-            particles.push({
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-              size: Math.random() < 0.6 ? 2 : 4,
-              color: COLORS[Math.floor(Math.random() * COLORS.length)],
-              vx: (Math.random() - 0.5) * 0.35,
-              vy: -Math.random() * 0.4 - 0.15,
-              alpha: Math.random() * 0.6 + 0.2,
-            });
-          }
-
-          function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var p of particles) {
-              ctx.globalAlpha = p.alpha;
-              ctx.fillStyle = p.color;
-              ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
-              p.x += p.vx;
-              p.y += p.vy;
-              if (p.y < -8) { p.y = canvas.height + 4; p.x = Math.random() * canvas.width; }
-              if (p.x < -8) p.x = canvas.width + 4;
-              if (p.x > canvas.width + 8) p.x = -4;
-            }
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(draw);
-          }
-
-          // Only run if not prefers-reduced-motion
-          var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-          if (!mq.matches) draw();
-        })();
-
-        // ── Global burger button (outside aside, position:fixed independent) ──
+        // ── Global burger button ─────────────────────────────────────────────
         (function() {
           var btn     = document.getElementById('globalNavToggler');
           var overlay = document.getElementById('navOverlay');
@@ -629,12 +496,10 @@ export default function Home() {
 
           btn.addEventListener('click', toggleDrawer);
           if (overlay) overlay.addEventListener('click', closeDrawer);
-
-          // Expose closeDrawer so script.js can sync
           window._closeNavDrawer = closeDrawer;
         })();
 
-        // ── Certificates Loader (inline agar tidak tergantung load order script.js) ──
+        // ── Certificates Loader ──────────────────────────────────────────────
         async function loadCertificatesInline() {
           var row = document.getElementById('certificatesRow');
           if (!row) return;
@@ -648,18 +513,24 @@ export default function Home() {
             }
             row.innerHTML = items.map(function(c) {
               var imgHtml = c.image
-                ? '<div class="certificate-img"><img src="' + c.image + '" alt="' + (c.title||'') + '" loading="lazy" onerror="this.parentElement.style.display=\\'none\\'"></div>'
+                ? '<div class="certificate-img"><img src="' + c.image + '" alt="' + (c.title||'') + '" loading="lazy"></div>'
                 : '<div class="certificate-img certificate-img--placeholder"><i class="fa fa-certificate"></i></div>';
-              return '<div class="certificate-item padd-15"><div class="certificate-item-inner shadow-dark" style="cursor:pointer;" onclick="openCertificateDetail(\\'' + encodeURIComponent(JSON.stringify(c)) + '\\')">'+imgHtml+'<div class="certificate-info"><h4>'+(c.title||'')+'</h4>'+(c.issuer?'<p class="certificate-issuer"><i class=\\"fa fa-building\\"></i> '+c.issuer+'</p>':'')+(c.issued_date?'<p class="certificate-date"><i class=\\"fa fa-calendar\\"></i> '+c.issued_date+'</p>':'')+'</div></div></div>';
+              var encoded = encodeURIComponent(JSON.stringify(c));
+              return '<div class="certificate-item padd-15"><div class="certificate-item-inner shadow-dark" style="cursor:pointer;" onclick="openCertificateDetail(' + "'" + encoded + "'" + ')">'
+                + imgHtml
+                + '<div class="certificate-info"><h4>' + (c.title||'') + '</h4>'
+                + (c.issuer ? '<p class="certificate-issuer">' + c.issuer + '</p>' : '')
+                + (c.issued_date ? '<p class="certificate-date">' + c.issued_date + '</p>' : '')
+                + '</div></div></div>';
             }).join('');
           } catch(err) {
             var r2 = document.getElementById('certificatesRow');
-            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-900);">Gagal memuat sertifikat.</div>';
+            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;">Gagal memuat sertifikat.</div>';
           }
         }
         loadCertificatesInline();
 
-        // ── Tasks Loader (inline agar tidak tergantung load order script.js) ──
+        // ── Tasks Loader ─────────────────────────────────────────────────────
         async function loadTasksInline() {
           var row = document.getElementById('tasksRow');
           if (!row) return;
@@ -668,7 +539,7 @@ export default function Home() {
             var data = await res.json();
             var items = (data && data.success && Array.isArray(data.data)) ? data.data : [];
             if (items.length === 0) {
-              row.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700)">Belum ada task.</div>';
+              row.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Belum ada task.</div>';
               return;
             }
             var iconMap = { doc:'fa-file-word', pdf:'fa-file-pdf', video:'fa-file-video', presentation:'fa-file-powerpoint', other:'fa-file-alt' };
@@ -677,37 +548,34 @@ export default function Home() {
               var iconClass = iconMap[t.link_type] || 'fa-file-alt';
               var iconColor = colorMap[t.link_type] || 'var(--skin-color)';
               var taskNum = t.task_number ? 'Task ' + t.task_number : '';
-              return '<div class="portfolio-item padd-15">'
-                + '<div class="portfolio-item-inner shadow-dark" style="display:flex;flex-direction:column;height:100%;padding:20px;border-radius:4px;overflow:hidden;">'
-                + '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;">'
-                + '<div style="width:44px;height:44px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
-                + '<i class="fa ' + iconClass + '" style="font-size:22px;color:' + iconColor + '"></i></div>'
-                + '<div style="flex:1;min-width:0;">'
-                + (taskNum ? '<span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--skin-color);opacity:0.8;">' + taskNum + '</span>' : '')
-                + '<h4 style="margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text-black-900);line-height:1.3;">' + (t.title||'') + '</h4>'
-                + '</div></div>'
-                + (t.description ? '<p style="font-size:12px;color:var(--text-black-700);line-height:1.5;margin:0 0 12px;flex:1;">' + t.description + '</p>' : '<div style="flex:1"></div>')
-                + '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">'
-                + (t.submitted_date ? '<span style="font-size:10px;color:var(--text-black-700);"><i class=\\"fa fa-calendar\\" style=\\"margin-right:4px;font-size:9px;\\"></i>' + t.submitted_date + '</span>' : '<span></span>')
-                + '<a href="' + t.link_url + '" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 14px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-decoration:none;">'
-                + '<i class=\\"fa fa-external-link-alt\\" style=\\"font-size:10px;\\"></i>' + (t.link_label||'Buka File') + '</a>'
-                + '</div></div></div>';
+              var html = '<div class="portfolio-item padd-15">';
+              html += '<div class="portfolio-item-inner shadow-dark" style="display:flex;flex-direction:column;height:100%;padding:20px;border-radius:4px;">';
+              html += '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;">';
+              html += '<div style="width:44px;height:44px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+              html += '<i class="fa ' + iconClass + '" style="font-size:22px;color:' + iconColor + '"></i></div>';
+              html += '<div style="flex:1;min-width:0;">';
+              if (taskNum) { html += '<span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--skin-color);opacity:0.8;">' + taskNum + '</span>'; }
+              html += '<h4 style="margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text-black-900);line-height:1.3;">' + (t.title||'') + '</h4>';
+              html += '</div></div>';
+              if (t.description) {
+                html += '<p style="font-size:12px;color:var(--text-black-700);line-height:1.5;margin:0 0 12px;flex:1;">' + t.description + '</p>';
+              } else {
+                html += '<div style="flex:1;"></div>';
+              }
+              html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">';
+              html += '<span style="font-size:10px;color:var(--text-black-700);">' + (t.submitted_date||'') + '</span>';
+              html += '<a href="' + t.link_url + '" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 14px;font-size:11px;font-weight:600;text-decoration:none;">' + (t.link_label||'Buka File') + '</a>';
+              html += '</div></div></div>';
+              return html;
             }).join('');
           } catch(err) {
             var r2 = document.getElementById('tasksRow');
-            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700)">Gagal memuat tasks.</div>';
+            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Gagal memuat tasks.</div>';
           }
         }
         loadTasksInline();
 
-
-          if (document.getElementById('certificateDetailOverlay').style.display === 'block') {
-            if (e.key === 'Escape') closeCertificateDetail();
-          }
-        });
-
-        // ── Certificate Detail close handler ────────────────────────────────
-        // Definisi fungsi di sini (bukan di script.js) agar tersedia saat addEventListener dipanggil
+        // ── Certificate Detail ───────────────────────────────────────────────
         function closeCertificateDetail() {
           var overlay = document.getElementById('certificateDetailOverlay');
           if (overlay) overlay.style.display = 'none';
@@ -717,45 +585,50 @@ export default function Home() {
         document.getElementById('certificateDetailOverlay').addEventListener('click', function(e) {
           if (e.target === this) closeCertificateDetail();
         });
+        document.addEventListener('keydown', function(e) {
+          if (document.getElementById('certificateDetailOverlay').style.display === 'block') {
+            if (e.key === 'Escape') closeCertificateDetail();
+          }
+        });
 
-        // ── Style switcher color onclick ─────────────────────────────────────
-        document.getElementById('sc-1').onclick = () => setActiveStyle('color-1');
-        document.getElementById('sc-2').onclick = () => setActiveStyle('color-2');
-        document.getElementById('sc-3').onclick = () => setActiveStyle('color-3');
-        document.getElementById('sc-4').onclick = () => setActiveStyle('color-4');
-        document.getElementById('sc-5').onclick = () => setActiveStyle('color-5');
+        // ── Style switcher ───────────────────────────────────────────────────
+        document.getElementById('sc-1').onclick = function() { setActiveStyle('color-1'); };
+        document.getElementById('sc-2').onclick = function() { setActiveStyle('color-2'); };
+        document.getElementById('sc-3').onclick = function() { setActiveStyle('color-3'); };
+        document.getElementById('sc-4').onclick = function() { setActiveStyle('color-4'); };
+        document.getElementById('sc-5').onclick = function() { setActiveStyle('color-5'); };
 
         // ── Contact Form ─────────────────────────────────────────────────────
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
           e.preventDefault();
-          const submitBtn = document.getElementById('cf-submit');
-          const statusEl = document.getElementById('cf-status');
-          const name = document.getElementById('cf-name').value.trim();
-          const email = document.getElementById('cf-email').value.trim();
-          const subject = document.getElementById('cf-subject').value.trim();
-          const message = document.getElementById('cf-message').value.trim();
+          var submitBtn = document.getElementById('cf-submit');
+          var statusEl  = document.getElementById('cf-status');
+          var name      = document.getElementById('cf-name').value.trim();
+          var email     = document.getElementById('cf-email').value.trim();
+          var subject   = document.getElementById('cf-subject').value.trim();
+          var message   = document.getElementById('cf-message').value.trim();
           submitBtn.disabled = true;
           submitBtn.textContent = 'Sending...';
           statusEl.style.display = 'none';
           try {
-            const res = await fetch('/api/contact', {
+            var res = await fetch('/api/contact', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name, email, subject, message }),
+              body: JSON.stringify({ name: name, email: email, subject: subject, message: message }),
             });
-            const data = await res.json();
+            var data = await res.json();
             if (res.ok && data.success) {
-              statusEl.textContent = '✅ Pesan berhasil dikirim!';
+              statusEl.textContent = 'Pesan berhasil dikirim!';
               statusEl.style.color = 'var(--skin-color)';
               statusEl.style.display = 'block';
               document.getElementById('contactForm').reset();
             } else {
-              statusEl.textContent = '❌ ' + (data.error || 'Gagal mengirim pesan. Coba lagi.');
+              statusEl.textContent = data.error || 'Gagal mengirim pesan. Coba lagi.';
               statusEl.style.color = '#e74c3c';
               statusEl.style.display = 'block';
             }
           } catch(err) {
-            statusEl.textContent = '❌ Terjadi kesalahan. Periksa koneksi internet Anda.';
+            statusEl.textContent = 'Terjadi kesalahan. Periksa koneksi internet.';
             statusEl.style.color = '#e74c3c';
             statusEl.style.display = 'block';
           } finally {
@@ -763,6 +636,7 @@ export default function Home() {
             submitBtn.textContent = 'Send Message';
           }
         });
+
       `}</Script>
         </>
     );
