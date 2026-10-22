@@ -44,6 +44,7 @@ export const SHEETS = {
     PROJECT_IMAGES: 'Project_Images',
     MESSAGES: 'Messages',
     CERTIFICATES: 'Certificates',
+    TASKS: 'Tasks',
 } as const;
 
 // ── Generic Helpers ───────────────────────────────────────────────────────────
@@ -592,4 +593,74 @@ export async function deleteCertificate(id: string): Promise<void> {
     const idx = rows.findIndex((r) => r.id === id);
     if (idx === -1) throw new Error(`Certificate ${id} tidak ditemukan`);
     await deleteSheetRow(SHEETS.CERTIFICATES, idx);
+}
+
+// ── Tasks (English Class Assignments) ────────────────────────────────────────
+
+export interface Task {
+    id: string;
+    title: string;           // Nama tugas, e.g. "Task 2 - Presentation"
+    description: string;     // Deskripsi singkat
+    task_number: string;     // Nomor tugas, e.g. "2"
+    link_url: string;        // Link Google Drive / YouTube / apapun
+    link_label: string;      // Label tombol, e.g. "Lihat Dokumen", "Tonton Video"
+    link_type: string;       // "doc" | "video" | "pdf" | "other"
+    submitted_date: string;  // Tanggal submit, e.g. "9 Oktober 2024"
+    published: string;
+    sort_order: string;
+}
+
+export async function getTasks(): Promise<Task[]> {
+    return (await getSheetRows(SHEETS.TASKS)) as unknown as Task[];
+}
+
+export async function getTaskById(id: string): Promise<Task | null> {
+    const rows = await getTasks();
+    return rows.find((r) => r.id === id) ?? null;
+}
+
+export async function createTask(data: Omit<Task, 'id'>): Promise<Task> {
+    const { v4: uuidv4 } = await import('uuid');
+    const id = uuidv4();
+    const values = [
+        id,
+        data.title,
+        data.description,
+        data.task_number,
+        data.link_url,
+        data.link_label,
+        data.link_type,
+        data.submitted_date,
+        data.published,
+        data.sort_order,
+    ];
+    await appendSheetRow(SHEETS.TASKS, values);
+    return { id, ...data };
+}
+
+export async function updateTask(id: string, data: Partial<Omit<Task, 'id'>>): Promise<void> {
+    const rows = await getTasks();
+    const idx = rows.findIndex((r) => r.id === id);
+    if (idx === -1) throw new Error(`Task ${id} tidak ditemukan`);
+    const current = rows[idx];
+    const updated = { ...current, ...data };
+    await updateSheetRow(SHEETS.TASKS, idx, [
+        updated.id,
+        updated.title,
+        updated.description,
+        updated.task_number,
+        updated.link_url,
+        updated.link_label,
+        updated.link_type,
+        updated.submitted_date,
+        updated.published,
+        updated.sort_order,
+    ]);
+}
+
+export async function deleteTask(id: string): Promise<void> {
+    const rows = await getTasks();
+    const idx = rows.findIndex((r) => r.id === id);
+    if (idx === -1) throw new Error(`Task ${id} tidak ditemukan`);
+    await deleteSheetRow(SHEETS.TASKS, idx);
 }

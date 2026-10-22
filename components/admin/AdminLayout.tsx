@@ -8,8 +8,8 @@ const navItems: NavItem[] = [
     { href: '/admin/dashboard',    label: 'Dashboard',    icon: '◈' },
     { href: '/admin/profile',      label: 'Profile',      icon: '◉' },
     { href: '/admin/services',     label: 'Services',     icon: '◧' },
-    { href: '/admin/projects',     label: 'Projects',     icon: '▦' },
     { href: '/admin/certificates', label: 'Certificates', icon: '◆' },
+    { href: '/admin/tasks',        label: 'Tasks',        icon: '✎' },
     { href: '/admin/skills',       label: 'Skills',       icon: '▲' },
     { href: '/admin/messages',     label: 'Messages',     icon: '▣' },
 ];

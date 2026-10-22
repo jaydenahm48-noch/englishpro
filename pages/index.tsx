@@ -92,8 +92,8 @@ export default function Home() {
                         <li><a href="#home" className="active"><i className="fa fa-home"></i> Home</a></li>
                         <li><a href="#about"><i className="fa fa-user"></i> About</a></li>
                         <li><a href="#service"><i className="fa fa-list"></i> Services</a></li>
-                        <li><a href="#portfolio"><i className="fa fa-briefcase"></i> Portfolio</a></li>
                         <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
+                        <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
                         <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
                     </ul>
                 </div>
@@ -314,28 +314,6 @@ export default function Home() {
                         </div>
                     </section>
 
-                    {/* ── PORTFOLIO ─────────────────────────────────────────────────── */}
-                    <section className="portfolio section" id="portfolio">
-                        <div className="container">
-                            <div className="row">
-                                <div className="section-title padd-15"><h2>Portfolio</h2></div>
-                            </div>
-                            <div className="row">
-                                <div className="portfolio-heading padd-15"><h2>My Last Projects :</h2></div>
-                            </div>
-                            {/* Portfolio items di-render JavaScript dari /api/portfolio */}
-                            <div className="row" id="portfolioRow">
-                                <div className="portfolio-item padd-15" style={{
-                                    flex: '0 0 100%', maxWidth: '100%',
-                                    textAlign: 'center', padding: '40px 0',
-                                    color: 'var(--text-black-700)'
-                                }}>
-                                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
                     {/* ── CERTIFICATES ──────────────────────────────────────────────── */}
                     <section className="certificate section" id="certificate">
                         <div className="container">
@@ -350,6 +328,30 @@ export default function Home() {
                             {/* Certificate items di-render oleh loadCertificates() di script.js */}
                             <div className="row" id="certificatesRow">
                                 <div className="certificate-item padd-15" style={{
+                                    flex: '0 0 100%', maxWidth: '100%',
+                                    textAlign: 'center', padding: '40px 0',
+                                    color: 'var(--text-black-700)'
+                                }}>
+                                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ── TASKS ─────────────────────────────────────────────────────── */}
+                    <section className="portfolio section" id="tasks">
+                        <div className="container">
+                            <div className="row">
+                                <div className="section-title padd-15"><h2>Tasks</h2></div>
+                            </div>
+                            <div className="row">
+                                <div className="portfolio-heading padd-15">
+                                    <h2>English Professional Tasks :</h2>
+                                </div>
+                            </div>
+                            {/* Task items di-render oleh loadTasks() di script.js */}
+                            <div className="row" id="tasksRow">
+                                <div className="portfolio-item padd-15" style={{
                                     flex: '0 0 100%', maxWidth: '100%',
                                     textAlign: 'center', padding: '40px 0',
                                     color: 'var(--text-black-700)'
@@ -441,92 +443,7 @@ export default function Home() {
                 {/* ── End Main Content ─────────────────────────────────────────────── */}
             </div>
 
-            {/* ── Portfolio Detail Modal ──────────────────────────────────────────── */}
-            <div id="portfolioDetailOverlay" style={{
-                display: 'none', position: 'fixed', inset: 0,
-                background: 'rgba(0,0,0,0.85)', zIndex: 999,
-                overflowY: 'auto', padding: '20px'
-            }}>
-                <div id="portfolioDetailCard" style={{
-                    maxWidth: '860px', margin: '40px auto',
-                    background: 'var(--bg-black-100)', borderRadius: '12px',
-                    overflow: 'hidden', position: 'relative'
-                }}>
-                    <button id="closeDetailBtn" style={{
-                        position: 'absolute', top: '14px', right: '16px',
-                        background: 'none', border: 'none', fontSize: '22px',
-                        cursor: 'pointer', color: 'var(--text-black-900)', zIndex: 10, lineHeight: 1
-                    }}>&#x2715;</button>
-                    <div id="pdThumbnail" style={{ width: '100%', maxHeight: '400px', overflow: 'hidden', background: 'var(--bg-black-50)' }}>
-                        <img id="pdThumbImg" src="" alt="" style={{ width: '100%', height: '400px', objectFit: 'cover', display: 'block' }} />
-                    </div>
-                    <div style={{ padding: '24px 28px' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                            <h2 id="pdTitle" style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-black-900)', flex: 1 }}></h2>
-                        </div>
-                        <p id="pdDeskripsi" style={{ fontSize: '15px', color: 'var(--text-black-700)', lineHeight: 1.7, marginBottom: '16px' }}></p>
-                        <div id="pdTeknologi" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}></div>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                            <a id="pdGithub" href="#" target="_blank" rel="noopener" style={{
-                                display: 'none', background: '#333', color: '#fff',
-                                padding: '10px 24px', borderRadius: '40px', fontSize: '14px', fontWeight: 500
-                            }}>
-                                <i className="fa fa-brands fa-github"></i> GitHub
-                            </a>
-                            <a id="pdLink" href="#" target="_blank" rel="noopener" style={{
-                                display: 'none', background: 'var(--skin-color)', color: '#fff',
-                                padding: '10px 28px', borderRadius: '40px', fontSize: '14px', fontWeight: 500
-                            }}>
-                                <i className="fa fa-external-link-alt"></i> Lihat Project
-                            </a>
-                        </div>
-                    </div>
-                    <div id="pdGallerySection" style={{ display: 'none', padding: '0 28px 28px' }}>
-                        <h4 style={{
-                            fontSize: '16px', fontWeight: 700, color: 'var(--text-black-900)',
-                            marginBottom: '14px', paddingTop: '20px',
-                            borderTop: '1px solid var(--bg-black-50)'
-                        }}>
-                            <i className="fa fa-images" style={{ color: 'var(--skin-color)', marginRight: '8px' }}></i>Dokumentasi
-                        </h4>
-                        <div id="pdGalleryGrid" style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                            gap: '12px'
-                        }}></div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Lightbox ─────────────────────────────────────────────────────────── */}
-            <div id="lightboxOverlay" style={{
-                display: 'none', position: 'fixed', inset: 0,
-                background: 'rgba(0,0,0,0.95)', zIndex: 1000,
-                alignItems: 'center', justifyContent: 'center'
-            }}>
-                <button id="closeLightboxBtn" style={{
-                    position: 'absolute', top: '16px', right: '20px',
-                    background: 'none', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer', lineHeight: 1
-                }}>&#x2715;</button>
-                <button id="lightboxPrevBtn" style={{
-                    position: 'absolute', left: '16px',
-                    background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
-                    fontSize: '24px', cursor: 'pointer', padding: '12px 16px', borderRadius: '8px'
-                }}>&#8592;</button>
-                <img id="lightboxImg" src="" alt="" style={{ maxWidth: '90vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: '6px' }} />
-                <button id="lightboxNextBtn" style={{
-                    position: 'absolute', right: '16px',
-                    background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
-                    fontSize: '24px', cursor: 'pointer', padding: '12px 16px', borderRadius: '8px'
-                }}>&#8594;</button>
-                <div id="lightboxCounter" style={{
-                    position: 'absolute', bottom: '16px', left: '50%',
-                    transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)',
-                    fontSize: '13px', fontFamily: 'Poppins, sans-serif'
-                }}></div>
-            </div>
-
-            {/* ── Certificate Detail Modal ─────────────────────────────────────────── */}
+                        {/* ── Certificate Detail Modal ─────────────────────────────────────────── */}
             <div id="certificateDetailOverlay">
                 <div id="certificateDetailCard">
                     <button className="cd-close-btn" id="cdCloseBtn">&#x2715;</button>
@@ -664,36 +581,6 @@ export default function Home() {
           window._closeNavDrawer = closeDrawer;
         })();
 
-        // ── Portfolio Loader ────────────────────────────────────────────────
-        async function loadPortfolio() {
-          const row = document.getElementById('portfolioRow');
-          try {
-            const res = await fetch('/api/portfolio');
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.error || 'Gagal memuat');
-            const items = data.data || [];
-            if (items.length === 0) {
-              row.innerHTML = '<div class="portfolio-item padd-15" style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Belum ada portfolio.</div>';
-              return;
-            }
-            row.innerHTML = items.map(item => {
-              const tech = item.technologies ? '<p>' + item.technologies + '</p>' : '';
-              const dataAttr = encodeURIComponent(JSON.stringify(item));
-              return '<div class="portfolio-item padd-15">'
-                + '<div class="portfolio-item-inner shadow-dark" style="cursor:pointer;" onclick="openPortfolioDetail(\\'' + dataAttr + '\\')">'
-                + '<div class="portfolio-img"><img src="' + item.thumbnail + '" alt="' + item.title + '" onerror="this.src=\\'/images/port.jpg\\'" style="transition:transform 0.3s ease;"></div>'
-                + '<div class="portfolio-info">'
-                + (item.title ? '<h4>' + item.title + '</h4>' : '')
-                + tech
-                + '</div>'
-                + '</div></div>';
-            }).join('');
-          } catch(err) {
-            row.innerHTML = '<div class="portfolio-item padd-15" style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Gagal memuat portfolio.</div>';
-          }
-        }
-        loadPortfolio();
-
         // ── Certificates Loader (inline agar tidak tergantung load order script.js) ──
         async function loadCertificatesInline() {
           var row = document.getElementById('certificatesRow');
@@ -719,78 +606,8 @@ export default function Home() {
         }
         loadCertificatesInline();
 
-        // ── Portfolio Detail Modal ──────────────────────────────────────────
-        function openPortfolioDetail(encoded) {
-          const item = JSON.parse(decodeURIComponent(encoded));
-          document.getElementById('pdThumbImg').src = item.thumbnail || '/images/port.jpg';
-          document.getElementById('pdTitle').textContent = item.title || '';
-          document.getElementById('pdDeskripsi').textContent = item.description || '';
-          const techEl = document.getElementById('pdTeknologi');
-          techEl.innerHTML = item.technologies
-            ? item.technologies.split(',').map(t => '<span style="background:var(--bg-black-50);color:var(--text-black-700);font-size:12px;padding:3px 12px;border-radius:20px;">' + t.trim() + '</span>').join('')
-            : '';
-          const githubEl = document.getElementById('pdGithub');
-          if (item.github_url) { githubEl.href = item.github_url; githubEl.style.display = 'inline-block'; }
-          else { githubEl.style.display = 'none'; }
-          const linkEl = document.getElementById('pdLink');
-          if (item.demo_url) { linkEl.href = item.demo_url; linkEl.style.display = 'inline-block'; }
-          else { linkEl.style.display = 'none'; }
-
-          // Fetch detail images
-          const gallerySection = document.getElementById('pdGallerySection');
-          const galleryGrid = document.getElementById('pdGalleryGrid');
-          gallerySection.style.display = 'none';
-          galleryGrid.innerHTML = '';
-          fetch('/api/portfolio/' + item.slug)
-            .then(r => r.json())
-            .then(d => {
-              if (d.success && d.data.images && d.data.images.length > 0) {
-                window._lightboxImgs = d.data.images.map(i => i.url);
-                galleryGrid.innerHTML = d.data.images.map((img, i) =>
-                  '<div style="aspect-ratio:16/10;overflow:hidden;border-radius:8px;cursor:pointer;background:var(--bg-black-50);" onclick="openLightbox(' + i + ')"><img src="' + img.url + '" alt="' + (img.caption || 'Detail ' + (i+1)) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease;" onmouseover="this.style.transform=\\'scale(1.05)\\'" onmouseout="this.style.transform=\\'scale(1)\\'" onerror="this.parentElement.style.display=\\'none\\'"></div>'
-                ).join('');
-                gallerySection.style.display = 'block';
-              }
-            }).catch(() => {});
-
-          document.getElementById('portfolioDetailOverlay').style.display = 'block';
-          document.body.style.overflow = 'hidden';
-        }
-
-        function closePortfolioDetail() {
-          document.getElementById('portfolioDetailOverlay').style.display = 'none';
-          document.body.style.overflow = '';
-        }
-        document.getElementById('closeDetailBtn').addEventListener('click', closePortfolioDetail);
-        document.getElementById('portfolioDetailOverlay').addEventListener('click', function(e) {
-          if (e.target === this) closePortfolioDetail();
-        });
-
-        // ── Lightbox ────────────────────────────────────────────────────────
-        let _lbIndex = 0;
-        function openLightbox(index) {
-          _lbIndex = index; updateLightbox();
-          document.getElementById('lightboxOverlay').style.display = 'flex';
-        }
-        function closeLightbox() { document.getElementById('lightboxOverlay').style.display = 'none'; }
-        function lightboxPrev() { _lbIndex = (_lbIndex - 1 + (window._lightboxImgs||[]).length) % (window._lightboxImgs||[1]).length; updateLightbox(); }
-        function lightboxNext() { _lbIndex = (_lbIndex + 1) % (window._lightboxImgs||[1]).length; updateLightbox(); }
-        function updateLightbox() {
-          const imgs = window._lightboxImgs || [];
-          document.getElementById('lightboxImg').src = imgs[_lbIndex] || '';
-          document.getElementById('lightboxCounter').textContent = (_lbIndex+1) + ' / ' + imgs.length;
-        }
-        document.getElementById('closeLightboxBtn').addEventListener('click', closeLightbox);
-        document.getElementById('lightboxPrevBtn').addEventListener('click', lightboxPrev);
-        document.getElementById('lightboxNextBtn').addEventListener('click', lightboxNext);
         document.addEventListener('keydown', function(e) {
-          if (document.getElementById('lightboxOverlay').style.display === 'flex') {
-            if (e.key === 'ArrowLeft') lightboxPrev();
-            if (e.key === 'ArrowRight') lightboxNext();
-            if (e.key === 'Escape') closeLightbox();
-          } else if (document.getElementById('portfolioDetailOverlay').style.display === 'block') {
-            if (e.key === 'Escape') closePortfolioDetail();
-          } else if (document.getElementById('certificateDetailOverlay').style.display === 'block') {
+          if (document.getElementById('certificateDetailOverlay').style.display === 'block') {
             if (e.key === 'Escape') closeCertificateDetail();
           }
         });

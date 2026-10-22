@@ -200,7 +200,68 @@ document.addEventListener('DOMContentLoaded', function () {
     loadServices();
     loadSkills();
     loadCertificates();
+    loadTasks();
 });
+
+/*-- Dynamic Tasks Loader --*/
+async function loadTasks() {
+    var row = document.getElementById('tasksRow');
+    if (!row) return;
+    try {
+        var res = await fetch('/api/tasks');
+        var data = await res.json();
+        var items = (data && data.success && Array.isArray(data.data)) ? data.data : [];
+        if (items.length === 0) {
+            row.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700)">Belum ada task.</div>';
+            return;
+        }
+
+        var iconMap = {
+            doc: 'fa-file-word',
+            pdf: 'fa-file-pdf',
+            video: 'fa-file-video',
+            presentation: 'fa-file-powerpoint',
+            other: 'fa-file-alt',
+        };
+        var colorMap = {
+            doc: '#4285f4',
+            pdf: '#ea4335',
+            video: '#ff0000',
+            presentation: '#fbbc04',
+            other: 'var(--skin-color)',
+        };
+
+        row.innerHTML = items.map(function (t) {
+            var iconClass = iconMap[t.link_type] || 'fa-file-alt';
+            var iconColor = colorMap[t.link_type] || 'var(--skin-color)';
+            var taskNum = t.task_number ? 'Task ' + t.task_number : '';
+            return '<div class="portfolio-item padd-15">'
+                + '<div class="portfolio-item-inner shadow-dark" style="display:flex;flex-direction:column;height:100%;padding:20px;border-radius:4px;overflow:hidden;">'
+                + '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;">'
+                + '<div style="width:44px;height:44px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+                + '<i class="fa ' + iconClass + '" style="font-size:22px;color:' + iconColor + '"></i>'
+                + '</div>'
+                + '<div style="flex:1;min-width:0;">'
+                + (taskNum ? '<span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--skin-color);opacity:0.8;">' + taskNum + '</span>' : '')
+                + '<h4 style="margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text-black-900);line-height:1.3;word-break:break-word;">' + (t.title || '') + '</h4>'
+                + '</div>'
+                + '</div>'
+                + (t.description ? '<p style="font-size:12px;color:var(--text-black-700);line-height:1.5;margin:0 0 12px;flex:1;">' + t.description + '</p>' : '<div style="flex:1"></div>')
+                + '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">'
+                + (t.submitted_date ? '<span style="font-size:10px;color:var(--text-black-700);"><i class="fa fa-calendar" style="margin-right:4px;font-size:9px;"></i>' + t.submitted_date + '</span>' : '<span></span>')
+                + '<a href="' + t.link_url + '" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 14px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-decoration:none;">'
+                + '<i class="fa fa-external-link-alt" style="font-size:10px;"></i>'
+                + (t.link_label || 'Buka File')
+                + '</a>'
+                + '</div>'
+                + '</div></div>';
+        }).join('');
+    } catch (err) {
+        var row2 = document.getElementById('tasksRow');
+        if (row2) row2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700)">Gagal memuat tasks.</div>';
+        console.warn('Tasks API error:', err);
+    }
+}
 
 /*-- Dynamic Certificates Loader --*/
 async function loadCertificates() {
