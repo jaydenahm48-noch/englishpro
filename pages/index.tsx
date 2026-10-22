@@ -34,7 +34,7 @@ export default function Home() {
             <Head>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <title>Zaidan — ENGLISH PRO</title>
+                <title>Zaidan — 2300018222 ENGLISH PRO</title>
 
                 {/* CSS existing — tidak diubah */}
                 <link rel="stylesheet" href="/css/style.css" />
@@ -117,7 +117,8 @@ export default function Home() {
                                         I&apos;m a <TypingText />
                                     </h3>
                                     <p>
-                                        I am a passionate fresh graduate and beginner programmer who is eager to 
+                                        I'm an Informatics student at Universitas Ahmad Dahlan and a passionate Fullstack & Mobile Developer
+                                         who is eager to 
                                         grow by working on real projects. I bring strong dedication, quick learning 
                                         skills, and a fresh perspective to every task — committed to delivering 
                                         quality work while continuously improving.
@@ -168,7 +169,7 @@ export default function Home() {
                                             <div
                                                 className="rpg-dialog"
                                                 id="about-dialog"
-                                                data-full-text="I'm a fresh graduate in Informatics from Universitas Ahmad Dahlan. Passionate about programming, web development, and creating digital solutions that bring real impact. Eager to learn, adapt, and deliver quality work — ready to grow and collaborate."
+                                                data-full-text="I'm an Informatics student at Universitas Ahmad Dahlan and a passionate fullstack & mobile developer, programming, web development, and creating digital solutions that bring real impact. Eager to learn, adapt, and deliver quality work — ready to grow and collaborate."
                                             >
                                                 <div className="rpg-dialog-header">Detail</div>
                                                 <div className="rpg-dialog-text">
@@ -188,8 +189,8 @@ export default function Home() {
                                                     <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                                                         <tbody>
                                                             <tr className="about-info-row"><td style={{ width: '90px', fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Birthday</td><td style={{ width: '15px', textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-700)' }}>19 NOV 2005</td></tr>
-                                                            <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Instagram</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-700)' }}>@jayden.noch</td></tr>
-                                                            <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Website</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', wordBreak: 'break-all', color: 'var(--text-black-700)' }}>portojay.vercel.app</td></tr>
+                                                            <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Instagram</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-700)' }}><a href="https://instagram.com/jayden.noch" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>@jayden.noch</a></td></tr>
+                                                            <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Website</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', wordBreak: 'break-all', color: 'var(--text-black-700)' }}><a href="https://portojay.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>portojay.vercel.app</a></td></tr>
                                                             <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Phone</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-700)' }}>+62 813 751 3615</td></tr>
                                                             <tr className="about-info-row"><td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>Country</td><td style={{ textAlign: 'center', padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-900)' }}>:</td><td style={{ padding: '6px 0', verticalAlign: 'top', color: 'var(--text-black-700)' }}>Indonesia</td></tr>
                                                         </tbody>
@@ -217,13 +218,62 @@ export default function Home() {
                                         {/* Skills */}
                                         <div className="skills padd-15">
                                             <div className="row">
-                                                <div className="skill-item padd-15"><h5>HTML, CSS</h5><div className="progress"><div className="progress-in" style={{ width: '70%' }}></div><div className="skill-percent">70%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>JS</h5><div className="progress"><div className="progress-in" style={{ width: '65%' }}></div><div className="skill-percent">65%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>C++</h5><div className="progress"><div className="progress-in" style={{ width: '65%' }}></div><div className="skill-percent">65%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>Laravel</h5><div className="progress"><div className="progress-in" style={{ width: '70%' }}></div><div className="skill-percent">70%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>PHP</h5><div className="progress"><div className="progress-in" style={{ width: '70%' }}></div><div className="skill-percent">70%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>MySQL</h5><div className="progress"><div className="progress-in" style={{ width: '70%' }}></div><div className="skill-percent">70%</div></div></div>
-                                                <div className="skill-item padd-15"><h5>API</h5><div className="progress"><div className="progress-in" style={{ width: '70%' }}></div><div className="skill-percent">70%</div></div></div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Next.js & React</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '85%' }}></div>
+                                                        <div className="skill-percent">85%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>TypeScript & JS</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '80%' }}></div>
+                                                        <div className="skill-percent">80%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Laravel & PHP</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '80%' }}></div>
+                                                        <div className="skill-percent">80%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Golang & WebAssembly</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '75%' }}></div>
+                                                        <div className="skill-percent">75%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Flutter & Dart</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '75%' }}></div>
+                                                        <div className="skill-percent">75%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Tailwind CSS & HTML</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '85%' }}></div>
+                                                        <div className="skill-percent">85%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>Supabase, PostgreSQL & MySQL</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '80%' }}></div>
+                                                        <div className="skill-percent">80%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="skill-item padd-15">
+                                                    <h5>REST API & Midtrans</h5>
+                                                    <div className="progress">
+                                                        <div className="progress-in" style={{ width: '80%' }}></div>
+                                                        <div className="skill-percent">80%</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -389,7 +439,11 @@ export default function Home() {
                                 <div className="contact-info-item padd-15">
                                     <div className="icon"><i className="fa fa-globe-asia"></i></div>
                                     <h4>Website</h4>
-                                    <p>portojay.vercel.app</p>
+                                    <p>
+                                        <a href="https://portojay.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                            portojay.vercel.app
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
                             <h3 className="contact-title padd-15">SEND ME AN EMAIL ?</h3>
