@@ -34,7 +34,7 @@ export default function Home() {
             <Head>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <title>Zaidan — Portfolio</title>
+                <title>Zaidan — ENGLISH PRO</title>
 
                 {/* CSS existing — tidak diubah */}
                 <link rel="stylesheet" href="/css/style.css" />
