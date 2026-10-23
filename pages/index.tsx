@@ -116,7 +116,6 @@ export default function Home() {
                         <li><a href="#home" className="active"><i className="fa fa-home"></i> Home</a></li>
                         <li><a href="#about"><i className="fa fa-user"></i> About</a></li>
                         <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
-                        <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
                     </ul>
                 </div>
 
