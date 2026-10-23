@@ -1,8 +1,5 @@
 ﻿/**
  * Public Frontend — Portfolio Website
- * Struktur HTML dipertahankan dari D:\REACTPORT\index.html.
- * Data portfolio dan contact di-fetch melalui API routes.
- * Desain visual TIDAK diubah — pixel art / animasi akan dikerjakan di tahap berikutnya.
  */
 
 import { useState, useEffect } from 'react';
@@ -10,24 +7,51 @@ import Head from 'next/head';
 import Script from 'next/script';
 import TypingText from '../components/admin/TypingText';
 
-const pixelFrames = [
-  '/images/pixel gerakan 1.png',
-  '/images/pixel gerakan 2.png',
-  '/images/pixel gerakan 3.png',
-  '/images/pixel gerakan 4.png',
-  '/images/pixel gerakan 5.png',
-];
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface Certificate {
+  id: string; title: string; description: string; issuer: string;
+  image: string; issued_date: string; credential_url: string;
+}
+
+interface Task {
+  id: string; title: string; description: string; task_number: string;
+  link_url: string; link_label: string; link_type: string; submitted_date: string;
+}
+
+// ── Icon/color maps for tasks ────────────────────────────────────────────────
+
+const TASK_ICON: Record<string, string> = {
+  doc: 'fa-file-word', pdf: 'fa-file-pdf', video: 'fa-file-video',
+  presentation: 'fa-file-powerpoint', other: 'fa-file-alt',
+};
+const TASK_COLOR: Record<string, string> = {
+  doc: '#4285f4', pdf: '#ea4335', video: '#ff0000',
+  presentation: '#fbbc04', other: 'var(--skin-color)',
+};
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [currentFrame, setCurrentFrame] = useState(0);
+  const [certs, setCerts] = useState<Certificate[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [certsLoading, setCertsLoading] = useState(true);
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
 
-    useEffect(() => {
-    const interval = setInterval(() => {
-        setCurrentFrame((prev) => (prev + 1) % pixelFrames.length);
-    }, 450); // 450ms agar animasi lebih santai dan tidak terlalu cepat
+  useEffect(() => {
+    fetch('/api/certificates')
+      .then(r => r.json())
+      .then(d => { if (d.success) setCerts(d.data); })
+      .catch(() => {})
+      .finally(() => setCertsLoading(false));
 
-    return () => clearInterval(interval);
-    }, []);
+    fetch('/api/tasks')
+      .then(r => r.json())
+      .then(d => { if (d.success) setTasks(d.data); })
+      .catch(() => {})
+      .finally(() => setTasksLoading(false));
+  }, []);
 
   return (
         <>
@@ -91,7 +115,6 @@ export default function Home() {
                     <ul className="nav">
                         <li><a href="#home" className="active"><i className="fa fa-home"></i> Home</a></li>
                         <li><a href="#about"><i className="fa fa-user"></i> About</a></li>
-                        <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
                         <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
                         <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
                     </ul>
@@ -279,29 +302,7 @@ export default function Home() {
                             </div>
                         </div>
                     </section>
-                    {/* ── CERTIFICATES ──────────────────────────────────────────────── */}
-                    <section className="certificate section" id="certificate">
-                        <div className="container">
-                            <div className="row">
-                                <div className="section-title padd-15"><h2>Certificates</h2></div>
-                            </div>
-                            <div className="row">
-                                <div className="portfolio-heading padd-15">
-                                    <h2 style={{ color: 'var(--text-black-900)' }}>My Certificates :</h2><br></br><br></br>
-                                </div>
-                            </div>
-                            {/* Certificate items di-render oleh loadCertificates() di script.js */}
-                            <div className="row" id="certificatesRow">
-                                <div className="certificate-item padd-15" style={{
-                                    flex: '0 0 100%', maxWidth: '100%',
-                                    textAlign: 'center', padding: '40px 0',
-                                    color: 'var(--text-black-700)'
-                                }}>
-                                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    
 
                     {/* ── TASKS ─────────────────────────────────────────────────────── */}
                     <section className="portfolio section" id="tasks">
@@ -314,15 +315,39 @@ export default function Home() {
                                     <h2>English Professional Tasks :</h2>
                                 </div>
                             </div>
-                            {/* Task items di-render oleh loadTasks() di script.js */}
+                            {/* Task items — rendered by React */}
                             <div className="row" id="tasksRow">
-                                <div className="portfolio-item padd-15" style={{
-                                    flex: '0 0 100%', maxWidth: '100%',
-                                    textAlign: 'center', padding: '40px 0',
-                                    color: 'var(--text-black-700)'
-                                }}>
-                                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
-                                </div>
+                                {tasksLoading ? (
+                                    <div className="portfolio-item padd-15" style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>
+                                        <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
+                                    </div>
+                                ) : tasks.length === 0 ? (
+                                    <div style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>Belum ada task.</div>
+                                ) : tasks.map(t => (
+                                    <div key={t.id} className="portfolio-item padd-15">
+                                        <div className="portfolio-item-inner shadow-dark" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px', borderRadius: '4px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
+                                                <div style={{ width: '44px', height: '44px', borderRadius: '4px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                    <i className={'fa ' + (TASK_ICON[t.link_type] || 'fa-file-alt')} style={{ fontSize: '22px', color: TASK_COLOR[t.link_type] || 'var(--skin-color)' }}></i>
+                                                </div>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    {t.task_number && <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--skin-color)', opacity: 0.8 }}>Task {t.task_number}</span>}
+                                                    <h4 style={{ margin: '2px 0 0', fontSize: '14px', fontWeight: 600, color: 'var(--text-black-900)', lineHeight: 1.3 }}>{t.title}</h4>
+                                                </div>
+                                            </div>
+                                            {t.description
+                                                ? <p style={{ fontSize: '12px', color: 'var(--text-black-700)', lineHeight: 1.5, margin: '0 0 12px', flex: 1 }}>{t.description}</p>
+                                                : <div style={{ flex: 1 }}></div>
+                                            }
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                                <span style={{ fontSize: '10px', color: 'var(--text-black-700)' }}>{t.submitted_date}</span>
+                                                <a href={t.link_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 600, textDecoration: 'none' }}>
+                                                    {t.link_label || 'Buka File'}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </section>
@@ -412,32 +437,7 @@ export default function Home() {
                 {/* ── End Main Content ─────────────────────────────────────────────── */}
             </div>
 
-                        {/* ── Certificate Detail Modal ─────────────────────────────────────────── */}
-            <div id="certificateDetailOverlay">
-                <div id="certificateDetailCard">
-                    <button className="cd-close-btn" id="cdCloseBtn">&#x2715;</button>
-                    <div className="cd-image-wrap">
-                        <img id="cdImage" src="" alt="" />
-                    </div>
-                    <div className="cd-body">
-                        <h2 id="cdTitle"></h2>
-                        <div className="cd-meta">
-                            <div className="cd-meta-item" id="cdIssuerWrap">
-                                <i className="fa fa-building"></i>
-                                <span id="cdIssuer"></span>
-                            </div>
-                            <div className="cd-meta-item" id="cdDateWrap">
-                                <i className="fa fa-calendar"></i>
-                                <span id="cdDate"></span>
-                            </div>
-                        </div>
-                        <p className="cd-description" id="cdDescription"></p>
-                        <a id="cdVerifyBtn" className="cd-verify-btn" href="#" target="_blank" rel="noopener">
-                            <i className="fa fa-external-link-alt"></i> Lihat Sertifikat
-                        </a>
-                    </div>
-                </div>
-            </div>
+            
 
             {/* ── Style Switcher ───────────────────────────────────────────────────── */}
             <div className="style-switcher">
@@ -475,121 +475,22 @@ export default function Home() {
           var aside   = document.querySelector('.aside');
           var sections = document.querySelectorAll('.section');
           if (!btn) return;
-
           function openDrawer() {
-            btn.classList.add('open');
-            btn.setAttribute('aria-expanded', 'true');
-            aside.classList.add('open');
-            overlay.classList.add('active');
+            btn.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+            aside.classList.add('open'); overlay.classList.add('active');
             sections.forEach(function(s){ s.classList.add('open'); });
           }
           function closeDrawer() {
-            btn.classList.remove('open');
-            btn.setAttribute('aria-expanded', 'false');
-            aside.classList.remove('open');
-            overlay.classList.remove('active');
+            btn.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
+            aside.classList.remove('open'); overlay.classList.remove('active');
             sections.forEach(function(s){ s.classList.remove('open'); });
           }
-          function toggleDrawer() {
+          btn.addEventListener('click', function() {
             if (aside.classList.contains('open')) closeDrawer(); else openDrawer();
-          }
-
-          btn.addEventListener('click', toggleDrawer);
+          });
           if (overlay) overlay.addEventListener('click', closeDrawer);
           window._closeNavDrawer = closeDrawer;
         })();
-
-        // ── Certificates Loader ──────────────────────────────────────────────
-        async function loadCertificatesInline() {
-          var row = document.getElementById('certificatesRow');
-          if (!row) return;
-          try {
-            var res = await fetch('/api/certificates');
-            var data = await res.json();
-            var items = (data && data.success && Array.isArray(data.data)) ? data.data : [];
-            if (items.length === 0) {
-              row.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-900);">Belum ada sertifikat.</div>';
-              return;
-            }
-            row.innerHTML = items.map(function(c) {
-              var imgHtml = c.image
-                ? '<div class="certificate-img"><img src="' + c.image + '" alt="' + (c.title||'') + '" loading="lazy"></div>'
-                : '<div class="certificate-img certificate-img--placeholder"><i class="fa fa-certificate"></i></div>';
-              var encoded = encodeURIComponent(JSON.stringify(c));
-              return '<div class="certificate-item padd-15"><div class="certificate-item-inner shadow-dark" style="cursor:pointer;" onclick="openCertificateDetail(' + "'" + encoded + "'" + ')">'
-                + imgHtml
-                + '<div class="certificate-info"><h4>' + (c.title||'') + '</h4>'
-                + (c.issuer ? '<p class="certificate-issuer">' + c.issuer + '</p>' : '')
-                + (c.issued_date ? '<p class="certificate-date">' + c.issued_date + '</p>' : '')
-                + '</div></div></div>';
-            }).join('');
-          } catch(err) {
-            var r2 = document.getElementById('certificatesRow');
-            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;">Gagal memuat sertifikat.</div>';
-          }
-        }
-        loadCertificatesInline();
-
-        // ── Tasks Loader ─────────────────────────────────────────────────────
-        async function loadTasksInline() {
-          var row = document.getElementById('tasksRow');
-          if (!row) return;
-          try {
-            var res = await fetch('/api/tasks');
-            var data = await res.json();
-            var items = (data && data.success && Array.isArray(data.data)) ? data.data : [];
-            if (items.length === 0) {
-              row.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Belum ada task.</div>';
-              return;
-            }
-            var iconMap = { doc:'fa-file-word', pdf:'fa-file-pdf', video:'fa-file-video', presentation:'fa-file-powerpoint', other:'fa-file-alt' };
-            var colorMap = { doc:'#4285f4', pdf:'#ea4335', video:'#ff0000', presentation:'#fbbc04', other:'var(--skin-color)' };
-            row.innerHTML = items.map(function(t) {
-              var iconClass = iconMap[t.link_type] || 'fa-file-alt';
-              var iconColor = colorMap[t.link_type] || 'var(--skin-color)';
-              var taskNum = t.task_number ? 'Task ' + t.task_number : '';
-              var html = '<div class="portfolio-item padd-15">';
-              html += '<div class="portfolio-item-inner shadow-dark" style="display:flex;flex-direction:column;height:100%;padding:20px;border-radius:4px;">';
-              html += '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;">';
-              html += '<div style="width:44px;height:44px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
-              html += '<i class="fa ' + iconClass + '" style="font-size:22px;color:' + iconColor + '"></i></div>';
-              html += '<div style="flex:1;min-width:0;">';
-              if (taskNum) { html += '<span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--skin-color);opacity:0.8;">' + taskNum + '</span>'; }
-              html += '<h4 style="margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text-black-900);line-height:1.3;">' + (t.title||'') + '</h4>';
-              html += '</div></div>';
-              if (t.description) {
-                html += '<p style="font-size:12px;color:var(--text-black-700);line-height:1.5;margin:0 0 12px;flex:1;">' + t.description + '</p>';
-              } else {
-                html += '<div style="flex:1;"></div>';
-              }
-              html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">';
-              html += '<span style="font-size:10px;color:var(--text-black-700);">' + (t.submitted_date||'') + '</span>';
-              html += '<a href="' + t.link_url + '" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 14px;font-size:11px;font-weight:600;text-decoration:none;">' + (t.link_label||'Buka File') + '</a>';
-              html += '</div></div></div>';
-              return html;
-            }).join('');
-          } catch(err) {
-            var r2 = document.getElementById('tasksRow');
-            if (r2) r2.innerHTML = '<div style="flex:0 0 100%;max-width:100%;text-align:center;padding:40px 0;color:var(--text-black-700);">Gagal memuat tasks.</div>';
-          }
-        }
-        loadTasksInline();
-
-        // ── Certificate Detail ───────────────────────────────────────────────
-        function closeCertificateDetail() {
-          var overlay = document.getElementById('certificateDetailOverlay');
-          if (overlay) overlay.style.display = 'none';
-          document.body.style.overflow = '';
-        }
-        document.getElementById('cdCloseBtn').addEventListener('click', closeCertificateDetail);
-        document.getElementById('certificateDetailOverlay').addEventListener('click', function(e) {
-          if (e.target === this) closeCertificateDetail();
-        });
-        document.addEventListener('keydown', function(e) {
-          if (document.getElementById('certificateDetailOverlay').style.display === 'block') {
-            if (e.key === 'Escape') closeCertificateDetail();
-          }
-        });
 
         // ── Style switcher ───────────────────────────────────────────────────
         document.getElementById('sc-1').onclick = function() { setActiveStyle('color-1'); };
@@ -614,7 +515,7 @@ export default function Home() {
             var res = await fetch('/api/contact', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: name, email: email, subject: subject, message: message }),
+              body: JSON.stringify({ name: name, email: email, subject: subject, message: message })
             });
             var data = await res.json();
             if (res.ok && data.success) {
@@ -623,12 +524,12 @@ export default function Home() {
               statusEl.style.display = 'block';
               document.getElementById('contactForm').reset();
             } else {
-              statusEl.textContent = data.error || 'Gagal mengirim pesan. Coba lagi.';
+              statusEl.textContent = data.error || 'Gagal mengirim pesan.';
               statusEl.style.color = '#e74c3c';
               statusEl.style.display = 'block';
             }
           } catch(err) {
-            statusEl.textContent = 'Terjadi kesalahan. Periksa koneksi internet.';
+            statusEl.textContent = 'Terjadi kesalahan koneksi.';
             statusEl.style.color = '#e74c3c';
             statusEl.style.display = 'block';
           } finally {
