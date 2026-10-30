@@ -118,7 +118,6 @@ export default function Home() {
             <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
             <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
             <li><a href="#portfolio"><i className="fa fa-book"></i> Project</a></li>
-            <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
           </ul>
         </div>
 
