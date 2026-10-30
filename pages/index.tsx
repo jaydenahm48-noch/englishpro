@@ -24,6 +24,14 @@ interface Project {
   technologies: string; thumbnail: string; github_url: string; demo_url: string; featured: boolean;
 }
 
+interface ProjectImage {
+  id: string; url: string; caption: string; sort_order: number;
+}
+
+interface ProjectDetail extends Project {
+  images: ProjectImage[];
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const PIXEL_FRAMES = [
@@ -54,6 +62,9 @@ export default function Home() {
   const [tasksLoading, setTasksLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
+  const [projectDetailLoading, setProjectDetailLoading] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Pixel sprite animation
   useEffect(() => {
@@ -86,10 +97,27 @@ export default function Home() {
 
   // Close cert modal on Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedCert(null); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedCert(null);
+        setSelectedProject(null);
+      }
+    };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  // Open project detail modal
+  const openProjectDetail = async (slug: string) => {
+    setProjectDetailLoading(true);
+    setActiveImageIndex(0);
+    try {
+      const r = await fetch(`/api/portfolio/${slug}`);
+      const d = await r.json();
+      if (d.success) setSelectedProject(d.data);
+    } catch { /* silent */ }
+    finally { setProjectDetailLoading(false); }
+  };
 
   return (
     <>
@@ -369,7 +397,11 @@ export default function Home() {
                   <div style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>Belum ada project.</div>
                 ) : projects.map(p => (
                   <div key={p.id} className="portfolio-item padd-15">
-                    <div className="portfolio-item-inner shadow-dark">
+                    <div
+                      className="portfolio-item-inner shadow-dark"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => openProjectDetail(p.slug)}
+                    >
                       <div className="portfolio-img">
                         <img src={p.thumbnail || '/images/port.jpg'} alt={p.title} loading="lazy" />
                       </div>
@@ -379,12 +411,16 @@ export default function Home() {
                         {p.technologies && <p style={{ fontSize: '10px', color: 'var(--skin-color)', marginTop: '4px' }}>{p.technologies}</p>}
                         <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                           {p.demo_url && (
-                            <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 12px', fontSize: '9px' }}>
+                            <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="btn"
+                              style={{ padding: '6px 12px', fontSize: '9px' }}
+                              onClick={e => e.stopPropagation()}>
                               <i className="fa fa-external-link-alt" style={{ marginRight: '4px' }}></i>Demo
                             </a>
                           )}
                           {p.github_url && (
-                            <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 12px', fontSize: '9px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--card-border)' }}>
+                            <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="btn"
+                              style={{ padding: '6px 12px', fontSize: '9px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--card-border)' }}
+                              onClick={e => e.stopPropagation()}>
                               <i className="fa fa-code" style={{ marginRight: '4px' }}></i>Code
                             </a>
                           )}
@@ -498,6 +534,137 @@ export default function Home() {
                 </a>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Project Detail Modal ── */}
+      {(selectedProject || projectDetailLoading) && (
+        <div
+          style={{
+            display: 'block', position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.92)', zIndex: 999,
+            overflowY: 'auto', padding: '20px',
+          }}
+          onClick={e => { if (e.target === e.currentTarget) setSelectedProject(null); }}
+        >
+          <div style={{
+            maxWidth: '860px', margin: '40px auto',
+            background: 'var(--bg-black-100)',
+            border: '1px solid var(--card-border)',
+            position: 'relative', overflow: 'hidden',
+          }}>
+            {/* Close */}
+            <button
+              onClick={() => setSelectedProject(null)}
+              style={{
+                position: 'absolute', top: '12px', right: '14px',
+                background: 'none', border: 'none', fontSize: '20px',
+                cursor: 'pointer', color: 'var(--text-black-900)',
+                zIndex: 10, fontFamily: 'monospace', lineHeight: 1,
+              }}
+            >&#x2715;</button>
+
+            {projectDetailLoading ? (
+              <div style={{ padding: '80px', textAlign: 'center', color: 'var(--text-black-700)' }}>
+                <i className="fa fa-spinner fa-spin" style={{ fontSize: '32px' }}></i>
+              </div>
+            ) : selectedProject && (
+              <>
+                {/* ── Gallery ── */}
+                {selectedProject.images && selectedProject.images.length > 0 && (
+                  <div style={{ background: 'var(--bg-black-50)' }}>
+                    {/* Main image */}
+                    <div style={{ width: '100%', maxHeight: '420px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
+                      <img
+                        src={selectedProject.images[activeImageIndex]?.url}
+                        alt={selectedProject.images[activeImageIndex]?.caption || selectedProject.title}
+                        style={{ maxWidth: '100%', maxHeight: '420px', objectFit: 'contain', display: 'block' }}
+                      />
+                    </div>
+                    {/* Caption */}
+                    {selectedProject.images[activeImageIndex]?.caption && (
+                      <div style={{ padding: '8px 16px', fontSize: '12px', color: 'var(--text-black-700)', fontStyle: 'italic', borderBottom: '1px solid var(--card-border)' }}>
+                        {selectedProject.images[activeImageIndex].caption}
+                      </div>
+                    )}
+                    {/* Thumbnails row */}
+                    {selectedProject.images.length > 1 && (
+                      <div style={{ display: 'flex', gap: '6px', padding: '10px 14px', overflowX: 'auto', flexWrap: 'nowrap' }}>
+                        {selectedProject.images.map((img, idx) => (
+                          <div
+                            key={img.id}
+                            onClick={() => setActiveImageIndex(idx)}
+                            style={{
+                              width: '70px', height: '52px', flexShrink: 0,
+                              cursor: 'pointer', overflow: 'hidden',
+                              border: idx === activeImageIndex ? '2px solid var(--skin-color)' : '2px solid transparent',
+                              opacity: idx === activeImageIndex ? 1 : 0.55,
+                              transition: 'opacity 0.2s, border-color 0.2s',
+                            }}
+                          >
+                            <img src={img.url} alt={img.caption || `img-${idx+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* Prev / Next arrows */}
+                    {selectedProject.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setActiveImageIndex(i => (i - 1 + selectedProject.images.length) % selectedProject.images.length)}
+                          style={{ position: 'absolute', top: '180px', left: '8px', background: 'rgba(0,0,0,0.55)', border: 'none', color: '#fff', width: '32px', height: '32px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >&#8249;</button>
+                        <button
+                          onClick={() => setActiveImageIndex(i => (i + 1) % selectedProject.images.length)}
+                          style={{ position: 'absolute', top: '180px', right: '8px', background: 'rgba(0,0,0,0.55)', border: 'none', color: '#fff', width: '32px', height: '32px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >&#8250;</button>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Thumbnail only (no images) fallback */}
+                {(!selectedProject.images || selectedProject.images.length === 0) && (
+                  <div style={{ width: '100%', height: '280px', overflow: 'hidden', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={selectedProject.thumbnail || '/images/port.jpg'} alt={selectedProject.title} style={{ maxWidth: '100%', maxHeight: '280px', objectFit: 'contain' }} />
+                  </div>
+                )}
+
+                {/* ── Info ── */}
+                <div style={{ padding: '22px 26px 28px' }}>
+                  <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '13px', fontWeight: 400, lineHeight: 1.7, color: 'var(--text-black-900)', marginBottom: '12px', letterSpacing: '0.06em' }}>
+                    {selectedProject.title}
+                  </h2>
+                  {selectedProject.technologies && (
+                    <div style={{ marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {selectedProject.technologies.split(',').map(t => (
+                        <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: '14px', letterSpacing: '0.04em', padding: '2px 8px', background: 'rgba(236,24,57,0.12)', border: '1px solid var(--card-border)', color: 'var(--skin-color)' }}>
+                          {t.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {selectedProject.description && (
+                    <p style={{ fontSize: '13px', color: 'var(--text-black-700)', lineHeight: 1.75, marginBottom: '20px' }}>
+                      {selectedProject.description}
+                    </p>
+                  )}
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    {selectedProject.demo_url && (
+                      <a href={selectedProject.demo_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: '9px', padding: '10px 18px' }}>
+                        <i className="fa fa-external-link-alt" style={{ marginRight: '6px' }}></i>Live Demo
+                      </a>
+                    )}
+                    {selectedProject.github_url && (
+                      <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: '9px', padding: '10px 18px', background: 'rgba(255,255,255,0.08)', border: '1px solid var(--card-border)', color: 'var(--text-black-900)' }}>
+                        <i className="fa fa-code" style={{ marginRight: '6px' }}></i>Source Code
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
