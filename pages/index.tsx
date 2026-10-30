@@ -19,6 +19,11 @@ interface Task {
   link_url: string; link_label: string; link_type: string; submitted_date: string;
 }
 
+interface Portfolio {
+  id: string; title: string; slug: string; description: string;
+  technologies: string; thumbnail: string; github_url: string; demo_url: string;
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const PIXEL_FRAMES = [
@@ -44,8 +49,10 @@ export default function Home() {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [certs, setCerts] = useState<Certificate[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [portfolio, setPortfolio] = useState<Portfolio[]>([]);
   const [certsLoading, setCertsLoading] = useState(true);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
 
   // Pixel sprite animation
@@ -69,6 +76,12 @@ export default function Home() {
       .then(d => { if (d.success) setTasks(d.data); })
       .catch(() => {})
       .finally(() => setTasksLoading(false));
+
+    fetch('/api/portfolio')
+      .then(r => r.json())
+      .then(d => { if (d.success) setPortfolio(d.data); })
+      .catch(() => {})
+      .finally(() => setPortfolioLoading(false));
   }, []);
 
   // Close cert modal on Escape
@@ -115,10 +128,9 @@ export default function Home() {
           <ul className="nav">
             <li><a href="#home" className="active"><i className="fa fa-home"></i> Home</a></li>
             <li><a href="#about"><i className="fa fa-user"></i> About</a></li>
-            <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
+            <li><a href="#portfolio"><i className="fa fa-briefcase"></i> Projects</a></li>
             <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
-            <li><a href="#portfolio"><i className="fa fa-book"></i> Project</a></li>
-            <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
+            <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
           </ul>
         </div>
 
@@ -253,8 +265,52 @@ export default function Home() {
             </div>
           </section>
 
-          {/* ── CERTIFICATES ── */}
-          <section className="certificate section" id="certificate">
+          {/* ── PORTFOLIO ── */}
+          <section className="portfolio section" id="portfolio">
+            <div className="container">
+              <div className="row">
+                <div className="section-title padd-15"><h2>Portfolio</h2></div>
+              </div>
+              <div className="row">
+                <div className="portfolio-heading padd-15"><h2>My Last Projects :</h2></div>
+              </div>
+              <div className="row">
+                {portfolioLoading ? (
+                  <div className="portfolio-item padd-15" style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>
+                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
+                  </div>
+                ) : portfolio.length === 0 ? (
+                  <div style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>Belum ada project.</div>
+                ) : portfolio.map(p => (
+                  <div key={p.id} className="portfolio-item padd-15">
+                    <div className="portfolio-item-inner shadow-dark">
+                      <div className="portfolio-img">
+                        <img src={p.thumbnail || '/images/port.jpg'} alt={p.title} onError={(e) => { (e.target as HTMLImageElement).src = '/images/port.jpg'; }} />
+                      </div>
+                      <div className="portfolio-info">
+                        <h4>{p.title}</h4>
+                        {p.technologies && <p>{p.technologies}</p>}
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                          {p.github_url && (
+                            <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '5px 12px', fontSize: '11px', textDecoration: 'none' }}>
+                              <i className="fa fa-brands fa-github"></i> GitHub
+                            </a>
+                          )}
+                          {p.demo_url && (
+                            <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '5px 12px', fontSize: '11px', textDecoration: 'none' }}>
+                              <i className="fa fa-external-link-alt"></i> Demo
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── CERTIFICATES ── */}          <section className="certificate section" id="certificate">
             <div className="container">
               <div className="row">
                 <div className="section-title padd-15"><h2>Certificates</h2></div>
