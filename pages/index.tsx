@@ -115,8 +115,9 @@ export default function Home() {
           <ul className="nav">
             <li><a href="#home" className="active"><i className="fa fa-home"></i> Home</a></li>
             <li><a href="#about"><i className="fa fa-user"></i> About</a></li>
-            <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
             <li><a href="#tasks"><i className="fa fa-book"></i> Tasks</a></li>
+            <li><a href="#certificate"><i className="fa fa-certificate"></i> Certificates</a></li>
+            <li><a href="#portfolio"><i className="fa fa-book"></i> Project</a></li>
             <li><a href="#contact"><i className="fa fa-comments"></i> Contact</a></li>
           </ul>
         </div>
