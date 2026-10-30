@@ -136,7 +136,7 @@ export default function Home() {
                     who is eager to grow by working on real projects. I bring strong dedication, quick learning
                     skills, and a fresh perspective to every task — committed to delivering quality work while continuously improving.
                   </p>
-                  <a href="/images/ZAIDANAHMAD_CV.pdf" className="btn" download>Download CV</a>
+                  <a href="/images/ZAIDAN_CV.pdf" className="btn" download>Download CV</a>
                 </div>
                 <div className="home-img padd-15">
                   <div style={{ width: '340px', height: '300px', overflow: 'hidden', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
@@ -201,7 +201,7 @@ export default function Home() {
                       </div>
                       <div className="row">
                         <div className="buttons padd-15">
-                          <a href="#contact" data-section-index="1" className="btn hire-me">Hire Me</a>
+                          <a href="#contact" className="btn hire-me">Hire Me</a>
                         </div>
                       </div>
                     </div>
