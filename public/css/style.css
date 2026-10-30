@@ -188,6 +188,8 @@ body.dark .section::before {
     transform: translateY(-2px);
 }
 .btn:active { transform: translateY(0); }
+.btn:focus { outline: none; }
+.btn:visited { color: inherit; }
 
 .shadow-dark { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
 
@@ -703,6 +705,23 @@ h3.my-profession {
     border-color: var(--skin-color);
     transform: translateY(-8px);
     box-shadow: 0 12px 36px rgba(236,24,57,0.2);
+}
+/* Prevent focus ring bleed from child link click — only when not hovering */
+.portfolio .portfolio-item-inner:focus-within:not(:hover) {
+    border-color: var(--card-border);
+    transform: translateY(0);
+    box-shadow: none;
+    animation-play-state: running;
+}
+.portfolio .portfolio-item-inner:focus,
+.portfolio .portfolio-item-inner *:focus {
+    outline: none;
+}
+
+/* Task cards — keep float + lift + skin border, remove corner triangle only */
+.portfolio .portfolio-item-inner--task::after,
+.portfolio .portfolio-item-inner--task:hover::after {
+    content: none !important;
 }
 .portfolio .portfolio-item-inner::after {
     content: '';

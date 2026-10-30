@@ -144,7 +144,7 @@ export default function Home() {
             <div className="container" style={{ position: 'relative', zIndex: 1 }}>
               <div className="row">
                 <div className="home-info padd-15">
-                  <h3 className="hello">Hello, my name is <span>Zaidan</span></h3>
+                  <h3 className="hello">Hello, my name is <span>Zaidan Ahmad Ath Thoriq</span></h3>
                   <h3 className="my-profession">I&apos;m a <TypingText /></h3>
                   <p>
                     I&apos;m an Informatics student at Universitas Ahmad Dahlan and a passionate Fullstack &amp; Mobile Developer
@@ -324,7 +324,7 @@ export default function Home() {
                   <div style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>Belum ada task.</div>
                 ) : tasks.map(t => (
                   <div key={t.id} className="portfolio-item padd-15">
-                    <div className="portfolio-item-inner shadow-dark" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px', borderRadius: '4px' }}>
+                    <div className="portfolio-item-inner portfolio-item-inner--task shadow-dark" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px', borderRadius: '4px' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
                         <div style={{ width: '44px', height: '44px', borderRadius: '4px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <i className={'fa ' + (TASK_ICON[t.link_type] || 'fa-file-alt')} style={{ fontSize: '22px', color: TASK_COLOR[t.link_type] || 'var(--skin-color)' }}></i>
