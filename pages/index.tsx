@@ -19,6 +19,11 @@ interface Task {
   link_url: string; link_label: string; link_type: string; submitted_date: string;
 }
 
+interface Project {
+  id: string; title: string; slug: string; description: string;
+  technologies: string; thumbnail: string; github_url: string; demo_url: string; featured: boolean;
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const PIXEL_FRAMES = [
@@ -44,8 +49,10 @@ export default function Home() {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [certs, setCerts] = useState<Certificate[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [certsLoading, setCertsLoading] = useState(true);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
 
   // Pixel sprite animation
@@ -69,6 +76,12 @@ export default function Home() {
       .then(d => { if (d.success) setTasks(d.data); })
       .catch(() => {})
       .finally(() => setTasksLoading(false));
+
+    fetch('/api/portfolio')
+      .then(r => r.json())
+      .then(d => { if (d.success) setProjects(d.data); })
+      .catch(() => {})
+      .finally(() => setProjectsLoading(false));
   }, []);
 
   // Close cert modal on Escape
@@ -328,6 +341,54 @@ export default function Home() {
                         <a href={t.link_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 600, textDecoration: 'none' }}>
                           {t.link_label || 'Buka File'}
                         </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── PORTFOLIO / PROJECTS ── */}
+          <section className="portfolio section" id="portfolio">
+            <div className="container">
+              <div className="row">
+                <div className="section-title padd-15"><h2>Projects</h2></div>
+              </div>
+              <div className="row">
+                <div className="portfolio-heading padd-15">
+                  <h2>My Projects :</h2>
+                </div>
+              </div>
+              <div className="row">
+                {projectsLoading ? (
+                  <div className="portfolio-item padd-15" style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>
+                    <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
+                  </div>
+                ) : projects.length === 0 ? (
+                  <div style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>Belum ada project.</div>
+                ) : projects.map(p => (
+                  <div key={p.id} className="portfolio-item padd-15">
+                    <div className="portfolio-item-inner shadow-dark">
+                      <div className="portfolio-img">
+                        <img src={p.thumbnail || '/images/port.jpg'} alt={p.title} loading="lazy" />
+                      </div>
+                      <div className="portfolio-info">
+                        <h4>{p.title}</h4>
+                        {p.description && <p>{p.description}</p>}
+                        {p.technologies && <p style={{ fontSize: '10px', color: 'var(--skin-color)', marginTop: '4px' }}>{p.technologies}</p>}
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                          {p.demo_url && (
+                            <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 12px', fontSize: '9px' }}>
+                              <i className="fa fa-external-link-alt" style={{ marginRight: '4px' }}></i>Demo
+                            </a>
+                          )}
+                          {p.github_url && (
+                            <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ padding: '6px 12px', fontSize: '9px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--card-border)' }}>
+                              <i className="fa fa-code" style={{ marginRight: '4px' }}></i>Code
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
