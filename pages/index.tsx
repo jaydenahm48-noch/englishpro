@@ -2,7 +2,7 @@
  * Public Frontend — Portfolio Website
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Script from 'next/script';
 import TypingText from '../components/admin/TypingText';
@@ -22,14 +22,6 @@ interface Task {
 interface Project {
   id: string; title: string; slug: string; description: string;
   technologies: string; thumbnail: string; github_url: string; demo_url: string; featured: boolean;
-}
-
-interface ProjectImage {
-  id: string; url: string; caption: string; sort_order: number;
-}
-
-interface ProjectDetail extends Project {
-  images: ProjectImage[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -62,9 +54,6 @@ export default function Home() {
   const [tasksLoading, setTasksLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
-  const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
-  const [projectDetailLoading, setProjectDetailLoading] = useState(false);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Pixel sprite animation
   useEffect(() => {
@@ -98,26 +87,11 @@ export default function Home() {
   // Close cert modal on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setSelectedCert(null);
-        setSelectedProject(null);
-      }
+      if (e.key === 'Escape') setSelectedCert(null);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
-
-  // Open project detail modal
-  const openProjectDetail = async (slug: string) => {
-    setProjectDetailLoading(true);
-    setActiveImageIndex(0);
-    try {
-      const r = await fetch(`/api/portfolio/${slug}`);
-      const d = await r.json();
-      if (d.success) setSelectedProject(d.data);
-    } catch { /* silent */ }
-    finally { setProjectDetailLoading(false); }
-  };
 
   return (
     <>
@@ -385,10 +359,10 @@ export default function Home() {
               </div>
               <div className="row">
                 <div className="portfolio-heading padd-15">
-                  <h2>My Projects :</h2>
+                  <h2>My Last Projects :</h2>
                 </div>
               </div>
-              <div className="row">
+              <div className="row" id="portfolioRow">
                 {projectsLoading ? (
                   <div className="portfolio-item padd-15" style={{ flex: '0 0 100%', maxWidth: '100%', textAlign: 'center', padding: '40px 0', color: 'var(--text-black-700)' }}>
                     <i className="fa fa-spinner fa-spin" style={{ fontSize: '28px' }}></i>
@@ -400,31 +374,24 @@ export default function Home() {
                     <div
                       className="portfolio-item-inner shadow-dark"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => openProjectDetail(p.slug)}
+                      onClick={() => {
+                        const encoded = encodeURIComponent(JSON.stringify(p));
+                        if (typeof (window as any).openPortfolioDetail === 'function') {
+                          (window as any).openPortfolioDetail(encoded);
+                        }
+                      }}
                     >
                       <div className="portfolio-img">
-                        <img src={p.thumbnail || '/images/port.jpg'} alt={p.title} loading="lazy" />
+                        <img
+                          src={p.thumbnail || '/images/port.jpg'}
+                          alt={p.title}
+                          loading="lazy"
+                          style={{ transition: 'transform 0.3s ease' }}
+                        />
                       </div>
                       <div className="portfolio-info">
                         <h4>{p.title}</h4>
-                        {p.description && <p>{p.description}</p>}
-                        {p.technologies && <p style={{ fontSize: '10px', color: 'var(--skin-color)', marginTop: '4px' }}>{p.technologies}</p>}
-                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                          {p.demo_url && (
-                            <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="btn"
-                              style={{ padding: '6px 12px', fontSize: '9px' }}
-                              onClick={e => e.stopPropagation()}>
-                              <i className="fa fa-external-link-alt" style={{ marginRight: '4px' }}></i>Demo
-                            </a>
-                          )}
-                          {p.github_url && (
-                            <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="btn"
-                              style={{ padding: '6px 12px', fontSize: '9px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--card-border)' }}
-                              onClick={e => e.stopPropagation()}>
-                              <i className="fa fa-code" style={{ marginRight: '4px' }}></i>Code
-                            </a>
-                          )}
-                        </div>
+                        {p.technologies && <p>{p.technologies}</p>}
                       </div>
                     </div>
                   </div>
@@ -538,136 +505,45 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Project Detail Modal ── */}
-      {(selectedProject || projectDetailLoading) && (
-        <div
-          style={{
-            display: 'block', position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.92)', zIndex: 999,
-            overflowY: 'auto', padding: '20px',
-          }}
-          onClick={e => { if (e.target === e.currentTarget) setSelectedProject(null); }}
-        >
-          <div style={{
-            maxWidth: '860px', margin: '40px auto',
-            background: 'var(--bg-black-100)',
-            border: '1px solid var(--card-border)',
-            position: 'relative', overflow: 'hidden',
-          }}>
-            {/* Close */}
-            <button
-              onClick={() => setSelectedProject(null)}
-              style={{
-                position: 'absolute', top: '12px', right: '14px',
-                background: 'none', border: 'none', fontSize: '20px',
-                cursor: 'pointer', color: 'var(--text-black-900)',
-                zIndex: 10, fontFamily: 'monospace', lineHeight: 1,
-              }}
-            >&#x2715;</button>
-
-            {projectDetailLoading ? (
-              <div style={{ padding: '80px', textAlign: 'center', color: 'var(--text-black-700)' }}>
-                <i className="fa fa-spinner fa-spin" style={{ fontSize: '32px' }}></i>
-              </div>
-            ) : selectedProject && (
-              <>
-                {/* ── Gallery ── */}
-                {selectedProject.images && selectedProject.images.length > 0 && (
-                  <div style={{ background: 'var(--bg-black-50)' }}>
-                    {/* Main image */}
-                    <div style={{ width: '100%', maxHeight: '420px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-                      <img
-                        src={selectedProject.images[activeImageIndex]?.url}
-                        alt={selectedProject.images[activeImageIndex]?.caption || selectedProject.title}
-                        style={{ maxWidth: '100%', maxHeight: '420px', objectFit: 'contain', display: 'block' }}
-                      />
-                    </div>
-                    {/* Caption */}
-                    {selectedProject.images[activeImageIndex]?.caption && (
-                      <div style={{ padding: '8px 16px', fontSize: '12px', color: 'var(--text-black-700)', fontStyle: 'italic', borderBottom: '1px solid var(--card-border)' }}>
-                        {selectedProject.images[activeImageIndex].caption}
-                      </div>
-                    )}
-                    {/* Thumbnails row */}
-                    {selectedProject.images.length > 1 && (
-                      <div style={{ display: 'flex', gap: '6px', padding: '10px 14px', overflowX: 'auto', flexWrap: 'nowrap' }}>
-                        {selectedProject.images.map((img, idx) => (
-                          <div
-                            key={img.id}
-                            onClick={() => setActiveImageIndex(idx)}
-                            style={{
-                              width: '70px', height: '52px', flexShrink: 0,
-                              cursor: 'pointer', overflow: 'hidden',
-                              border: idx === activeImageIndex ? '2px solid var(--skin-color)' : '2px solid transparent',
-                              opacity: idx === activeImageIndex ? 1 : 0.55,
-                              transition: 'opacity 0.2s, border-color 0.2s',
-                            }}
-                          >
-                            <img src={img.url} alt={img.caption || `img-${idx+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {/* Prev / Next arrows */}
-                    {selectedProject.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setActiveImageIndex(i => (i - 1 + selectedProject.images.length) % selectedProject.images.length)}
-                          style={{ position: 'absolute', top: '180px', left: '8px', background: 'rgba(0,0,0,0.55)', border: 'none', color: '#fff', width: '32px', height: '32px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >&#8249;</button>
-                        <button
-                          onClick={() => setActiveImageIndex(i => (i + 1) % selectedProject.images.length)}
-                          style={{ position: 'absolute', top: '180px', right: '8px', background: 'rgba(0,0,0,0.55)', border: 'none', color: '#fff', width: '32px', height: '32px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >&#8250;</button>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Thumbnail only (no images) fallback */}
-                {(!selectedProject.images || selectedProject.images.length === 0) && (
-                  <div style={{ width: '100%', height: '280px', overflow: 'hidden', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={selectedProject.thumbnail || '/images/port.jpg'} alt={selectedProject.title} style={{ maxWidth: '100%', maxHeight: '280px', objectFit: 'contain' }} />
-                  </div>
-                )}
-
-                {/* ── Info ── */}
-                <div style={{ padding: '22px 26px 28px' }}>
-                  <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '13px', fontWeight: 400, lineHeight: 1.7, color: 'var(--text-black-900)', marginBottom: '12px', letterSpacing: '0.06em' }}>
-                    {selectedProject.title}
-                  </h2>
-                  {selectedProject.technologies && (
-                    <div style={{ marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                      {selectedProject.technologies.split(',').map(t => (
-                        <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: '14px', letterSpacing: '0.04em', padding: '2px 8px', background: 'rgba(236,24,57,0.12)', border: '1px solid var(--card-border)', color: 'var(--skin-color)' }}>
-                          {t.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {selectedProject.description && (
-                    <p style={{ fontSize: '13px', color: 'var(--text-black-700)', lineHeight: 1.75, marginBottom: '20px' }}>
-                      {selectedProject.description}
-                    </p>
-                  )}
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    {selectedProject.demo_url && (
-                      <a href={selectedProject.demo_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: '9px', padding: '10px 18px' }}>
-                        <i className="fa fa-external-link-alt" style={{ marginRight: '6px' }}></i>Live Demo
-                      </a>
-                    )}
-                    {selectedProject.github_url && (
-                      <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: '9px', padding: '10px 18px', background: 'rgba(255,255,255,0.08)', border: '1px solid var(--card-border)', color: 'var(--text-black-900)' }}>
-                        <i className="fa fa-code" style={{ marginRight: '6px' }}></i>Source Code
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
+      {/* ── Portfolio Detail Modal ── */}
+      <div id="portfolioDetailOverlay" style={{ display: 'none', position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 999, overflowY: 'auto', padding: '20px' }}>
+        <div id="portfolioDetailCard" style={{ maxWidth: '860px', margin: '40px auto', background: 'var(--bg-black-100)', borderRadius: '12px', overflow: 'hidden', position: 'relative' }}>
+          <button id="closeDetailBtn" style={{ position: 'absolute', top: '14px', right: '16px', background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: 'var(--text-black-900)', zIndex: 10, lineHeight: 1 }}>&#x2715;</button>
+          <div id="pdThumbnail" style={{ width: '100%', maxHeight: '400px', overflow: 'hidden', background: 'var(--bg-black-50)' }}>
+            <img id="pdThumbImg" src="" alt="" style={{ width: '100%', height: '400px', objectFit: 'cover', display: 'block' }} />
+          </div>
+          <div style={{ padding: '24px 28px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <h2 id="pdTitle" style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-black-900)', flex: 1 }}></h2>
+            </div>
+            <p id="pdDeskripsi" style={{ fontSize: '15px', color: 'var(--text-black-700)', lineHeight: 1.7, marginBottom: '16px' }}></p>
+            <div id="pdTeknologi" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}></div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <a id="pdGithub" href="#" target="_blank" rel="noopener" style={{ display: 'none', background: '#333', color: '#fff', padding: '10px 24px', borderRadius: '40px', fontSize: '14px', fontWeight: 500 }}>
+                <i className="fa fa-brands fa-github"></i> GitHub
+              </a>
+              <a id="pdLink" href="#" target="_blank" rel="noopener" style={{ display: 'none', background: 'var(--skin-color)', color: '#fff', padding: '10px 28px', borderRadius: '40px', fontSize: '14px', fontWeight: 500 }}>
+                <i className="fa fa-external-link-alt"></i> Lihat Project
+              </a>
+            </div>
+          </div>
+          <div id="pdGallerySection" style={{ display: 'none', padding: '0 28px 28px' }}>
+            <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-black-900)', marginBottom: '14px', paddingTop: '20px', borderTop: '1px solid var(--bg-black-50)' }}>
+              <i className="fa fa-images" style={{ color: 'var(--skin-color)', marginRight: '8px' }}></i>Dokumentasi
+            </h4>
+            <div id="pdGalleryGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}></div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* ── Lightbox ── */}
+      <div id="lightboxOverlay" style={{ display: 'none', position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, alignItems: 'center', justifyContent: 'center' }}>
+        <button id="closeLightboxBtn" style={{ position: 'absolute', top: '16px', right: '20px', background: 'none', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer', lineHeight: 1 }}>&#x2715;</button>
+        <button id="lightboxPrevBtn" style={{ position: 'absolute', left: '16px', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', padding: '12px 16px', borderRadius: '8px' }}>&#8592;</button>
+        <img id="lightboxImg" src="" alt="" style={{ maxWidth: '90vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: '6px' }} />
+        <button id="lightboxNextBtn" style={{ position: 'absolute', right: '16px', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', padding: '12px 16px', borderRadius: '8px' }}>&#8594;</button>
+        <div id="lightboxCounter" style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontFamily: 'Poppins, sans-serif' }}></div>
+      </div>
 
       {/* ── Style Switcher ── */}
       <div className="style-switcher">
@@ -706,6 +582,86 @@ export default function Home() {
         document.getElementById('sc-3').onclick = function() { setActiveStyle('color-3'); };
         document.getElementById('sc-4').onclick = function() { setActiveStyle('color-4'); };
         document.getElementById('sc-5').onclick = function() { setActiveStyle('color-5'); };
+
+        // ── Portfolio Detail Modal ──────────────────────────────────────────
+        window.openPortfolioDetail = function(encoded) {
+          var item = JSON.parse(decodeURIComponent(encoded));
+          document.getElementById('pdThumbImg').src = item.thumbnail || '/images/port.jpg';
+          document.getElementById('pdTitle').textContent = item.title || '';
+          document.getElementById('pdDeskripsi').textContent = item.description || '';
+          var techEl = document.getElementById('pdTeknologi');
+          techEl.innerHTML = item.technologies
+            ? item.technologies.split(',').map(function(t) {
+                return '<span style="background:var(--bg-black-50);color:var(--text-black-700);font-size:12px;padding:3px 12px;border-radius:20px;">' + t.trim() + '</span>';
+              }).join('')
+            : '';
+          var githubEl = document.getElementById('pdGithub');
+          if (item.github_url) { githubEl.href = item.github_url; githubEl.style.display = 'inline-block'; }
+          else { githubEl.style.display = 'none'; }
+          var linkEl = document.getElementById('pdLink');
+          if (item.demo_url) { linkEl.href = item.demo_url; linkEl.style.display = 'inline-block'; }
+          else { linkEl.style.display = 'none'; }
+          // Fetch gallery images
+          var gallerySection = document.getElementById('pdGallerySection');
+          var galleryGrid = document.getElementById('pdGalleryGrid');
+          gallerySection.style.display = 'none';
+          galleryGrid.innerHTML = '';
+          if (item.slug) {
+            fetch('/api/portfolio/' + item.slug)
+              .then(function(r) { return r.json(); })
+              .then(function(d) {
+                if (d.success && d.data.images && d.data.images.length > 0) {
+                  window._lightboxImgs = d.data.images.map(function(i) { return i.url; });
+                  galleryGrid.innerHTML = d.data.images.map(function(img, i) {
+                    return '<div style="aspect-ratio:16/10;overflow:hidden;border-radius:8px;cursor:pointer;background:var(--bg-black-50);" onclick="openLightbox(' + i + ')">'
+                      + '<img src="' + img.url + '" alt="Detail ' + (i+1) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease;" onmouseover="this.style.transform=&quot;scale(1.05)&quot;" onmouseout="this.style.transform=&quot;scale(1)&quot;" onerror="this.parentElement.style.display=&quot;none&quot;">'
+                      + '</div>';
+                  }).join('');
+                  gallerySection.style.display = 'block';
+                }
+              })
+              .catch(function() {});
+          }
+          document.getElementById('portfolioDetailOverlay').style.display = 'block';
+          document.body.style.overflow = 'hidden';
+        };
+
+        function closePortfolioDetail() {
+          document.getElementById('portfolioDetailOverlay').style.display = 'none';
+          document.body.style.overflow = '';
+        }
+        document.getElementById('closeDetailBtn').addEventListener('click', closePortfolioDetail);
+        document.getElementById('portfolioDetailOverlay').addEventListener('click', function(e) {
+          if (e.target === this) closePortfolioDetail();
+        });
+
+        // ── Lightbox ────────────────────────────────────────────────────────
+        var _lbIndex = 0;
+        window.openLightbox = function(index) {
+          _lbIndex = index; updateLightbox();
+          document.getElementById('lightboxOverlay').style.display = 'flex';
+        };
+        function closeLightbox() { document.getElementById('lightboxOverlay').style.display = 'none'; }
+        function lightboxPrev() { _lbIndex = (_lbIndex - 1 + (window._lightboxImgs||[]).length) % ((window._lightboxImgs||[1]).length); updateLightbox(); }
+        function lightboxNext() { _lbIndex = (_lbIndex + 1) % ((window._lightboxImgs||[1]).length); updateLightbox(); }
+        function updateLightbox() {
+          var imgs = window._lightboxImgs || [];
+          document.getElementById('lightboxImg').src = imgs[_lbIndex] || '';
+          document.getElementById('lightboxCounter').textContent = (_lbIndex + 1) + ' / ' + imgs.length;
+        }
+        document.getElementById('closeLightboxBtn').addEventListener('click', closeLightbox);
+        document.getElementById('lightboxPrevBtn').addEventListener('click', lightboxPrev);
+        document.getElementById('lightboxNextBtn').addEventListener('click', lightboxNext);
+        document.addEventListener('keydown', function(e) {
+          if (document.getElementById('lightboxOverlay').style.display === 'flex') {
+            if (e.key === 'ArrowLeft') lightboxPrev();
+            if (e.key === 'ArrowRight') lightboxNext();
+            if (e.key === 'Escape') closeLightbox();
+          } else if (document.getElementById('portfolioDetailOverlay').style.display === 'block') {
+            if (e.key === 'Escape') closePortfolioDetail();
+          }
+        });
+
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
           e.preventDefault();
           var btn = document.getElementById('cf-submit');
