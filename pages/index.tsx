@@ -138,7 +138,6 @@ export default function Home() {
                                         skills, and a fresh perspective to every task — committed to delivering 
                                         quality work while continuously improving.
                                     </p>
-                                    <a href="/images/ZAIDANAHMAD_CV.pdf" className="btn" download>Download CV</a>
                                 </div>
                             </div>
                         </div>
